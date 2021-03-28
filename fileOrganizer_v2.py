@@ -188,14 +188,16 @@ def movefiles(destfolder_name, list_files):
 
 
 def deleteemptyfolders(subfolders_list):
+    deletedfolder = []
     for folder in subfolders_list:
         if not os.listdir(folder):
             logger.info('[%s] is empty, will delete it', folder.path)
             try:
                 os.rmdir(folder)
+                deletedfolder.append(folder)
             except OSError as err:
                 logger.error('[%s]', err)
-
+    return deletedfolder  
 
 def comparefile(file, destfilefull):
     return filecmp.cmp(file, destfilefull)
@@ -254,7 +256,7 @@ if __name__ == '__main__':
         logger.info('moving files from source folder to destination folder')
         movefiles(destFolder, list_files)
         logger.info('deleting empty folders in source folder')
-        deleteemptyfolders(list_subfolders)
+        deletedfolder = deleteemptyfolders(list_subfolders)
     logger.debug('Time - Setting end time of actual script')
     end_time = time.time_ns()
     logger.debug('Time - calculating run time')
