@@ -15,16 +15,17 @@ to the 'SourceFiles' list.
 """
 """"
 This script requires python version 3.6 or above.
+"This product uses the TMDb API but is not endorsed or certified by TMDb."
 
 To use the script, the user needs to set the following global variables:
-    * 'sourceFolder' - the folder the script will list the files from.
-    * 'sourceFiles' - the list of extensions the script will search for,
+    * 'source_folder' - the folder the script will list the files from.
+    * 'source_files_ext' - the list of extensions the script will search for,
         you can add more extensions by adding according to the following example.
-        '.ext' seperated by comma.
-    * 'destFolder' - the destination folder that the script will move the files to, if the 'destFolder' is empty,
-        the script will create the new files under the sourceFolder.
+        '.ext' separated by comma.
+    * 'dest_folder' - the destination folder that the script will move the files to, if the 'dest_folder' is empty,
+        the script will create the new files under the source_folder.
     * 'log_location' - the folder that the script log will be saved in, if 'log_location' is empty,
-        the script will save the log in the 'destFolder'
+        the script will save the log in the 'dest_folder'
     * enable_log = If 'True' the script will write logs, if false the script will not write ANY log. default is 'True'
     * enable_file_log = If 'True' the script will logs to a log file, if false the script will not write the log file.
       default is 'True'
@@ -38,23 +39,27 @@ To use the script, the user needs to set the following global variables:
 # ----------------------------------------------------------------------------------------------------------------
 # Global Variables
 # ----------------------------------------------------------------------------------------------------------------
-RUNS = 1
+
 # Source folder where to look for files
-sourceFolder = 'C:\\ScriptTest'
+source_folder = 'C:\\ScriptTest'
 
 # list of extensions the script will handle
-sourceFiles = ('.avi', '.mpg', '.mkv')
+source_files_ext = (
+            '.avi',
+            '.mpg',
+            '.mkv'
+            )
 
 # destination folder where the new file folders will be created, empty will revert to source folder
-destFolder = 'C:\\ScriptDest'
+dest_folder = 'C:\\ScriptDest'
 
 # if you want the folders to be created under the source folder
-# destFolder = "C:\\ScriptTest\\Newfolder"
+# dest_folder = "C:\\ScriptTest\\Newfolder"
 
 # destination folder where to store log and csv files - csv is optional
 log_location = 'C:\\Scripts'
 
-# if you want the script to check subfolders as well as the sourcefolders set this to true
+# if you want the script to check sub_folders as well as the source_folder set this to true
 recursive = True
 
 # enables log
@@ -69,6 +74,8 @@ csv_report_name = "fileOrganizer_report.csv"
 logger = logging.getLogger('fileOrganizer')
 logger.setLevel(logging.DEBUG)       # sets file logging level, set this as desired, accepts: debug, error, info
 
+# Configure how many times to run script for timing \\ DO NOT MODIFY THIS VALUE!
+RUNS = 1
 # ----------------------------------------------------------------------------------------------------------------
 # DO NOT MODIFY THE SCRIPT BEYOND THIS POINT
 # ----------------------------------------------------------------------------------------------------------------
@@ -76,7 +83,7 @@ logger.setLevel(logging.DEBUG)       # sets file logging level, set this as desi
 
 # logger function
 # creates logger handler
-def configlogger():
+def config_logger():
 
     # create console handler and set level to debug
     ch = logging.StreamHandler()
@@ -100,133 +107,133 @@ def configlogger():
         logger.addHandler(fh)
 
 
-# function dirscanner
+# function dir_scanner
 # input: source Folder to scan, source File extensions to search
 # returns 2 object lists: sub folder list and files list
-def dirscanner(sourceFolder, sourceFiles):
-    logger.debug('dirscanner - initiating [subfolders] and [files] lists')
-    subfolders, files = [], []                                                # init lists of subfolders and files
-    for entry in os.scandir(sourceFolder):                                    # itirate the first folder
-        if os.path.isdir(entry):                                              # check if entry is folder
-            subfolders.append(entry)                                          # add entry to subfolders list
-            logger.debug('found sub folder: %s in folder [%s]', entry.name, os.path.dirname(entry))
-        if os.path.isfile(entry):                                             # check if enrty is file
-            if os.path.splitext(entry.name)[1] in sourceFiles:                # check if entry has the right extensions
+def dir_scanner(source_folder, source_files_ext):
+    logger.debug('dir_scanner - initiating [sub_folders] and [files] lists')
+    sub_folders, files = [], []                                                # init lists of sub_folders and files
+    for entry in os.scandir(source_folder):                                    # itirate the first folder
+        if os.path.isdir(entry.path):                                              # check if entry is folder
+            sub_folders.append(entry)                                          # add entry to sub_folders list
+            logger.debug('found sub folder: %s in folder [%s]', entry.name, os.path.dirname(entry.path))
+        if os.path.isfile(entry.path):                                             # check if enrty is file
+            if os.path.splitext(entry.name)[1] in source_files_ext:                # check if entry has the right extensions
                 files.append(entry)                                           # add entry to files list
-                logger.info('found file: [%s] in folder [%s]', entry.name, os.path.dirname(entry))
+                logger.info('found file: [%s] in folder [%s]', entry.name, os.path.dirname(entry.path))
     if recursive:                                                             # check if to search recursively
-        for sourceFolder in list(subfolders):                                 # recursive check in all subfolders
-            r_subfolders, r_files = dirscanner(sourceFolder, sourceFiles)     # do recursion function
-            subfolders.extend(r_subfolders)                                   # append subfolder to list
-            files.extend(r_files)                                             # append subfile to list
-    return subfolders, files                                                  # return subfolders and files lists
+        for source_folder in list(sub_folders):                                 # recursive check in all sub_folders
+            r_sub_folders, r_files = dir_scanner(source_folder, source_files_ext)     # do recursion function
+            sub_folders.extend(r_sub_folders)                                   # extend new sub_folders to list
+            files.extend(r_files)                                             # append sub_file to list
+    return sub_folders, files                                                  # return sub_folders and files lists
 
 
-# function createfolder
-# input: destination folder to move the files to, the list of files created by dirscanner function
-# must run dirscanner first
+# function create_folder
+# input: destination folder to move the files to, the list of files created by dir_scanner function
+# must run dir_scanner first
 # returns an object list of created folders
-def createfolder(destfolder, list_files):
-    createdfolder = []                                                        # init list of created folders
+def create_folder(dest_folder, list_files):
+    created_folder = []                                                        # init list of created folders
     for folder in list_files:                                                 # iterate through list of files
         file_name = os.path.splitext(folder.name)                             # save file name without extension
-        destfolder_name = (os.path.join(destfolder, file_name[0]))            # save destination folder name
-        logger.debug('folder: [%s] created', destfolder_name)
+        dest_folder_name = (os.path.join(dest_folder, file_name[0]))            # save destination folder name
+        logger.debug('folder: [%s] created', dest_folder_name)
         try:
-            os.mkdir(destfolder_name)                                         # create destination folder
+            os.mkdir(dest_folder_name)                                         # create destination folder
         except FileExistsError:                                               # handle folder exists error
-            logger.warning('[%s] folder already exists', destfolder_name)
+            logger.warning('[%s] folder already exists', dest_folder_name)
             pass
         except Exception as err:                                              # log other errors
             logger.warning('error returned: ([%s]) ', err)
             raise
-        createdfolder.append(destfolder_name)                                 # add created folder object to list
-    return createdfolder                                                      # return a list of creted folders
+        created_folder.append(dest_folder_name)                                 # add created folder object to list
+    return created_folder                                                      # return a list of creted folders
 
 
-def movefiles(destfolder_name, list_files):
+def move_files(dest_folder_name, list_files):
     for file in list_files:
-        destfolderfull = os.path.join(destfolder_name, os.path.splitext(file.name)[0])
-        destfilefull = os.path.join(destfolderfull, file.name)
-        if os.path.exists(destfilefull):
-            if comparefile(file.path, destfilefull):
+        dest_folder_full = os.path.join(dest_folder_name, os.path.splitext(file.name)[0])
+        dest_file_full = os.path.join(dest_folder_full, file.name)
+        if os.path.exists(dest_file_full):
+            if compare_file(file.path, dest_file_full):
                 try:
-                    shutil.move(file.path, os.path.join(destfolderfull, file.name))
+                    shutil.move(file.path, os.path.join(dest_folder_full, file.name))
                     logger.warning('[%s] already exists in folder [%s], and its contents is matching the source file, '
-                                   'file will be replaced', file.name, destfolderfull)
+                                   'file will be replaced', file.name, dest_folder_full)
                     if generate_csv:
                         f = open(os.path.join(log_location, csv_report_name), "a")
-                        print(file.path + "," + file.name + "," + destfolderfull + "," + file.name, file=f)
+                        print(file.path + "," + file.name + "," + dest_folder_full + "," + file.name, file=f)
                         f.close()
                 except OSError as err:
                     logger.error('[%s]', err)
                     raise
             else:
-                filenewname = os.path.splitext(file.name)[0] + '_copy' + os.path.splitext(file.name)[1]
+                file_new_name = os.path.splitext(file.name)[0] + '_copy' + os.path.splitext(file.name)[1]
                 try:
-                    shutil.move(file.path, os.path.join(destfolderfull, filenewname))
+                    shutil.move(file.path, os.path.join(dest_folder_full, file_new_name))
                     logger.warning('[%s] already exists in folder [%s], and its contents does not match the '
-                                   'source file, ''file will be created as a copy', file.name, destfolderfull)
+                                   'source file, ''file will be created as a copy', file.name, dest_folder_full)
                     if generate_csv:
                         f = open(os.path.join(log_location, csv_report_name), "a")
-                        print(file.path + "," + file.name + "," + destfolderfull + "," + filenewname, file=f)
+                        print(file.path + "," + file.name + "," + dest_folder_full + "," + file_new_name, file=f)
                         f.close()
                 except OSError as err:
                     logger.error('[%s]', err)
                     raise
         else:
             try:
-                shutil.move(file.path, os.path.join(destfolderfull, file.name))
-                logger.info('[%s] did not exist in folder [%s], moving file', file.name, destfolderfull)
+                shutil.move(file.path, os.path.join(dest_folder_full, file.name))
+                logger.info('[%s] did not exist in folder [%s], moving file', file.name, dest_folder_full)
                 if generate_csv:
                     f = open(os.path.join(log_location, csv_report_name), "a")
-                    print(file.path + "," + file.name + "," + destfolderfull + "," + file.name, file=f)
+                    print(file.path + "," + file.name + "," + dest_folder_full + "," + file.name, file=f)
                     f.close()
             except OSError as err:
                 logger.error('[%s]', err)
                 raise
 
 
-def deleteemptyfolders(subfolders_list):
-    deletedfolder = []
-    for folder in subfolders_list:
+def delete_empty_folders(sub_folders_list):
+    deleted_folder = []
+    for folder in sub_folders_list:
         if not os.listdir(folder):
             logger.info('[%s] is empty, will delete it', folder.path)
             try:
                 os.rmdir(folder)
-                deletedfolder.append(folder)
+                deleted_folder.append(folder)
             except OSError as err:
                 logger.error('[%s]', err)
-    return deletedfolder  
+    return deleted_folder
 
-def comparefile(file, destfilefull):
-    return filecmp.cmp(file, destfilefull)
+def compare_file(file, dest_file_full):
+    return filecmp.cmp(file, dest_file_full)
 
 
 if __name__ == '__main__':
     if enable_log:
-        configlogger()
+        config_logger()
     logger.info('-------------------------------------------------------------------------------------------------')
     logger.info('START OF SCRIPT')
     logger.info('-------------------------------------------------------------------------------------------------\n')
 
     # Sanity checks
-    logger.debug('CHECK - checking if sourceFolder is set')
-    if sourceFolder == '':
+    logger.debug('CHECK - checking if source_folder is set')
+    if source_folder == '':
         logger.error('CHECK - Source Folder must be configured for the script to run, exists script')
         exit(1)
     else:
-        logger.debug('CHECK - sourceFolder is set to: [%s]', sourceFolder)
-    logger.debug('CHECK - checking if destFolder is set')
-    if destFolder == '':
+        logger.debug('CHECK - source_folder is set to: [%s]', source_folder)
+    logger.debug('CHECK - checking if dest_folder is set')
+    if dest_folder == '':
         logger.warning('CHECK - Destination Folder was not configured, using source folder')
-        destFolder = sourceFolder
+        dest_folder = source_folder
     else:
-        logger.debug('CHECK - destFolder is set to: [%s]', destFolder)
+        logger.debug('CHECK - dest_folder is set to: [%s]', dest_folder)
     logger.debug('CHECK - checking if log_location is set')
     if log_location == '':
         logger.warning('Log location Folder was not configured, using destination folder')
-        log_location = destFolder
+        log_location = dest_folder
     else:
         logger.debug('CHECK - log_location is set to: [%s]', log_location)
     logger.debug('CHECK - checking if generate_csv is set')
@@ -249,14 +256,14 @@ if __name__ == '__main__':
     start_time = time.time_ns()
     logger.debug('RUN - running script functions')
     for i in range(RUNS):
-        logger.info('listing files found in source folder: [%s]', sourceFolder)
-        list_subfolders, list_files = dirscanner(sourceFolder, sourceFiles)
-        logger.info('creating folders in destination folder: [%s]', destFolder)
-        createdfolder = createfolder(destFolder, list_files)
+        logger.info('listing files found in source folder: [%s]', source_folder)
+        list_sub_folders, list_files = dir_scanner(source_folder, source_files_ext)
+        logger.info('creating folders in destination folder: [%s]', dest_folder)
+        created_folder = create_folder(dest_folder, list_files)
         logger.info('moving files from source folder to destination folder')
-        movefiles(destFolder, list_files)
+        move_files(dest_folder, list_files)
         logger.info('deleting empty folders in source folder')
-        deletedfolder = deleteemptyfolders(list_subfolders)
+        deleted_folder = delete_empty_folders(list_sub_folders)
     logger.debug('Time - Setting end time of actual script')
     end_time = time.time_ns()
     logger.debug('Time - calculating run time')
@@ -266,11 +273,11 @@ if __name__ == '__main__':
     logger.info('END OF SCRIPT')
     logger.info('-------------------------------------------------------------------------------------------------\n')
 
-# print('created folder: ', createdfolder)
-    # for i in createdfolder:
+# print('created folder: ', created_folder)
+    # for i in created_folder:
     #    print("created folder:", os.path.basename(i), 'in full path: ', i)
     # for file in list_files:
-    #    movefiles(destFolder, file)
+    #    move_files(dest_folder, file)
 
     # to get parent folder name from list_files use:  os.path.split(os.path.dirname(i.path))[1]
     # to get created folder name use: os.path.basename(i)

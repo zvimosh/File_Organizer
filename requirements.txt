@@ -1,0 +1,3 @@
+# FileOrganizer version 2.0   | 29/03/2021
+# Requirements:
+# Python version 3.9
