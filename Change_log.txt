@@ -1,0 +1,8 @@
+# version 2.0.0:
+# Built the script from the beginning
+# changed Functions to be standalone instead of calling functions from another.
+
+# version 2.0.1:
+# Fixed Bugs:
+#           1. empty log file was created when "enable_log" was set to 'True' and "enable_file_log" was set to 'False'
+#           2. change variable naming conversion
