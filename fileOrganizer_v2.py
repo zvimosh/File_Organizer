@@ -124,7 +124,7 @@ def dir_scanner(source_folder, source_files_ext):
             sub_folders.append(entry)  # add entry to sub_folders list
             logger.debug('found sub folder: %s in folder [%s]', entry.name, os.path.dirname(entry.path))
         if os.path.isfile(entry.path):  # check if enrty is file
-            if os.path.splitext(entry.name)[1] in source_files_ext:  # check if entry has the right extensions
+            if os.path.splitext(entry.name)[1].lower() in source_files_ext:  # check if entry has the right extensions
                 files.append(entry)  # add entry to files list
                 logger.info('found file: [%s] in folder [%s]', entry.name, os.path.dirname(entry.path))
     if recursive:  # check if to search recursively
