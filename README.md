@@ -9,6 +9,7 @@ Email: z*******@gmail.com
 Published Date: 25/03/2021 Version: 2
 ---------------------------------------------------------------------------------------------------------------
 Date: 08/09/2021 Version: 2.0.1
+
 This script requires python version 3.9 or above.
 To use the script, the user needs to set the following global variables:
 * 'source_folder' - the folder the script will list the files from.
