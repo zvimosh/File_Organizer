@@ -6,19 +6,20 @@ to the 'SourceFiles' list.
 ---------------------------------------------------------------------------------------------------------------
 Author: Zvi Moshkovitz
 Email: z*******@gmail.com
-Date: 25/03/2021
-Version: 2
+Date: 25/03/2021 Version: 2
+Date: 08/09/2021 Version: 2.0.1
 ---------------------------------------------------------------------------------------------------------------
-This script requires python version 3.6 or above.
+This script requires python version 3.9 or above.
 To use the script, the user needs to set the following global variables:
-* 'sourceFolder' - the folder the script will list the files from.
-* 'sourceFiles' - the list of extensions the script will search for,
+* 'source_folder' - the folder the script will list the files from.
+* 'source_files_ext' - the list of extensions the script will search for,
 you can add more extensions by adding according to the following example.
 '.ext' seperated by comma.
-* 'destFolder' - the destination folder that the script will move the files to, if the 'destFolder' is empty,
+* 'destination_folder' - the destination folder that the script will move the files to, if the 'destFolder' is empty,
 the script will create the new files under the sourceFolder.
 * 'log_location' - the folder that the script log will be saved in, if 'log_location' is empty,
 the script will save the log in the 'destFolder'
+* 'recursive' - If True script will search in all subfolders, if False, script will only search in root folder
 * enable_log = If 'True' the script will write logs, if false the script will not write ANY log. default is 'True'
 * enable_file_log = If 'True' the script will logs to a log file, if false the script will not write the log file.
 default is 'True'
