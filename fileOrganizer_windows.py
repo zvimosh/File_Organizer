@@ -41,7 +41,7 @@ To use the script, the user needs to set the following global variables:
 # ----------------------------------------------------------------------------------------------------------------
 RUNS = 1
 # Source folder where to look for files
-source_folder = 'c:\scritptsource'
+source_folder = 'c:\\scritptsource'
 
 # list of extensions the script will handle
 source_files_ext = (
@@ -60,13 +60,13 @@ source_files_ext = (
                 '.f4v')
 
 # destination folder where the new file folders will be created, empty will revert to source folder
-dest_folder = 'c:\scriptdest'
+dest_folder = 'c:\\scriptdest'
 
 # if you want the folders to be created under the source folder
 # dest_folder = "C:\\ScriptTest\\Newfolder"
 
 # destination folder where to store log and csv files - csv is optional
-log_location = 'c:\temp\'
+log_location = 'C:\\ScriptTest'
 
 # if you want the script to check sub_folders as well as the source_folder set this to true
 recursive = True
