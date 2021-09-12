@@ -16,7 +16,6 @@ Version = 2.0.1
 """
 """
 This script requires python version 3.6 or above.
-"This product uses the TMDb API but is not endorsed or certified by TMDb."
 To use the script, the user needs to set the following global variables:
     * 'source_folder' - the folder the script will list the files from.
     * 'source_files_ext' - the list of extensions the script will search for,
