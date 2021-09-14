@@ -8,9 +8,10 @@ Author: Zvi Moshkovitz
 Email: z*******@gmail.com
 Published Date: 25/03/2021 Version: 2
 ---------------------------------------------------------------------------------------------------------------
-Date: 08/09/2021 Version: 2.0.1
+Date: 14/09/2021 Version: 2.2
 
-This script requires python version 3.9 or above.
+This script requires python version 3.9 or above and additional 3rd party python libraries.
+
 To use the script, the user needs to set the following global variables:
 * 'source_folder' - the folder the script will list the files from.
 * 'source_files_ext' - the list of extensions the script will search for,

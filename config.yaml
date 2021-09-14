@@ -14,7 +14,7 @@ Logs:
     enable_log: True
     enable_file_log: True
     enable_console_log: True
-    log_level : INFO
+    log_level : debug
     generate_csv: True
     csv_report_name: fileOrganizer_report.csv
 Other:
