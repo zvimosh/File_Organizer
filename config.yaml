@@ -1,1 +1,21 @@
 #configuration file for File Organizer
+Folders:
+    source_folder: C:\\ScriptTest
+    destination_folder: C:\\ScriptDest
+    log_location: C:\\ScriptTestArchive
+Files:
+    source_files_ext: [
+            '.avi', '.mpg', '.mkv', '.mp4', '.wmv', 
+            '.flv', '.mpeg', '.mov', '.m4v', '.webm', 
+            '.3gp', '.ts', '.f4v'
+        ]
+
+Logs:
+    enable_log: True
+    enable_file_log: True
+    enable_console_log: True
+    log_level : INFO
+    generate_csv: True
+    csv_report_name: fileOrganizer_report.csv
+Other:
+    recursive: True
