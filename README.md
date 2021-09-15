@@ -38,4 +38,4 @@ default is 'True'
 To Do:
 * Clean up code.
 * Add support to run script with cli parameters
-* Containrize it
+* Containerize it
