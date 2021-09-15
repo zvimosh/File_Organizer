@@ -1,8 +1,8 @@
 File_Organizer
 This script organizes files into separate source folders,
 the folder names are created from the file names.
-The script will search all files within the 'Source Folder' recursively for any files with matching extensions
-to the 'SourceFiles' list.
+The script will search the 'Source Folder' recursively for any files with matching extensions
+to the 'source_files_ext' list.
 ---------------------------------------------------------------------------------------------------------------
 Author: Zvi Moshkovitz
 Email: z*******@gmail.com
