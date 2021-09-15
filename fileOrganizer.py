@@ -16,8 +16,8 @@ to the 'SourceFiles' list.
 Version = 2.0.1
 """
 """
-This script requires python version 3.6 or above.
-To use the script, the user needs to set the following global variables:
+This script requires python version 3.9 or above.
+To use the script, the user needs to set the following variables in config.yaml file:
     * 'source_folder' - the folder the script will list the files from.
     * 'source_files_ext' - the list of extensions the script will search for,
         you can add more extensions by adding according to the following example.
@@ -103,7 +103,7 @@ def config_logger():
     if enable_file_log:
         logger.addHandler(fh)
     
-    # sets file logging level, set this as desired, accepts: debug, error, info
+    # sets file logging level, accepts: debug, error, info
     if log_level.upper() == 'INFO':
         logger.setLevel(logging.INFO)
     elif log_level.upper() == 'DEBUG':
@@ -115,7 +115,7 @@ def config_logger():
     else:
         print('log level was not set, please configure log level as one of these options\n'
         'INFO,WARNING,ERROR,DEBUG')
-        exit
+        exit(1)
 
 
 # function dir_scanner
@@ -173,14 +173,13 @@ def move_files(dest_folder_name, list_files):
                 except OSError as err:
                     logger.error('[%s]', err)
                     raise
-                    logger.warning('[%s] already exists in folder [%s], and its contents is matching the source file, '
-                                   'file will be replaced', file.name, dest_folder_full)
-
-                    
-                    if generate_csv:
-                        f = open(os.path.join(log_location, csv_report_name), "a")
-                        print(file.path + "," + file.name + "," + dest_folder_full + "," + file.name, file=f)
-                        f.close()
+                logger.warning('[%s] already exists in folder [%s], and its contents is matching the source file, '
+                               'file will be replaced', file.name, dest_folder_full)
+        
+                if generate_csv:
+                    f = open(os.path.join(log_location, csv_report_name), "a")
+                    print(file.path + "," + file.name + "," + dest_folder_full + "," + file.name, file=f)
+                    f.close()
 
             else:
                 file_new_name = os.path.splitext(file.name)[0] + '_copy' + os.path.splitext(file.name)[1]
@@ -189,12 +188,12 @@ def move_files(dest_folder_name, list_files):
                 except OSError as err:
                     logger.error('[%s]', err)
                     raise
-                    logger.warning('[%s] already exists in folder [%s], and its contents does not match the '
-                                   'source file, ''file will be created as a copy', file.name, dest_folder_full)
-                    if generate_csv:
-                        f = open(os.path.join(log_location, csv_report_name), "a")
-                        print(file.path + "," + file.name + "," + dest_folder_full + "," + file_new_name, file=f)
-                        f.close()
+                logger.warning('[%s] already exists in folder [%s], and its contents does not match the '
+                                'source file, ''file will be created as a copy', file.name, dest_folder_full)
+                if generate_csv:
+                    f = open(os.path.join(log_location, csv_report_name), "a")
+                    print(file.path + "," + file.name + "," + dest_folder_full + "," + file_new_name, file=f)
+                    f.close()
 
         else:
             try:
@@ -226,7 +225,7 @@ def compare_file(file, dest_file_full):
 
 
 if __name__ == '__main__':
-    #source_folder, dest_folder, log_location, source_files_ext, recursive,enable_log, log_level, enable_file_log, enable_console_log, generate_csv, csv_report_name = read_config()
+
     read_config()
     # create logger
     logger = logging.getLogger(AppName)
