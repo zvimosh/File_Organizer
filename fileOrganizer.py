@@ -6,6 +6,7 @@ import logging
 import os
 import shutil
 import time
+import confuse
 
 """
 This script organizes files into separate source folders,
@@ -15,8 +16,8 @@ to the 'SourceFiles' list.
 Version = 2.0.1
 """
 """
-This script requires python version 3.6 or above.
-To use the script, the user needs to set the following global variables:
+This script requires python version 3.9 or above.
+To use the script, the user needs to set the following variables in config.yaml file:
     * 'source_folder' - the folder the script will list the files from.
     * 'source_files_ext' - the list of extensions the script will search for,
         you can add more extensions by adding according to the following example.
@@ -38,56 +39,44 @@ To use the script, the user needs to set the following global variables:
 # ----------------------------------------------------------------------------------------------------------------
 # Global Variables
 # ----------------------------------------------------------------------------------------------------------------
-RUNS = 1
-# Source folder where to look for files
-source_folder = '/mnt/user/Misc2/'
 
-# list of extensions the script will handle
-source_files_ext = (
-                '.avi', 
-                '.mpg', 
-                '.mkv', 
-                '.mp4', 
-                '.wmv', 
-                '.flv', 
-                '.mpeg', 
-                '.mov', 
-                '.m4v', 
-                '.webm', 
-                '.3gp', 
-                '.ts',
-                '.f4v')
-
-# destination folder where the new file folders will be created, empty will revert to source folder
-dest_folder = '/mnt/user/Misc/'
-
-# if you want the folders to be created under the source folder
-# dest_folder = "C:\\ScriptTest\\Newfolder"
-
-# destination folder where to store log and csv files - csv is optional
-log_location = '/mnt/user/ScriptArchive/'
-
-# if you want the script to check sub_folders as well as the source_folder set this to true
-recursive = True
-
-# enables log
-enable_log = True
-enable_file_log = True
-enable_console_log = True
-# set it to true if you want to generate a csv report of the files, csv file will be saved in the log location
-generate_csv = True
-csv_report_name = "fileOrganizer_report.csv"
-
-# create logger
-logger = logging.getLogger('fileOrganizer')
-logger.setLevel(logging.INFO)       # sets file logging level, set this as desired, accepts: debug, error, info
+# Application Name
+AppName = 'FileOrganizer'
 
 # Configure how many times to run script for timing \\ DO NOT MODIFY THIS VALUE!
 RUNS = 1
+
 # ----------------------------------------------------------------------------------------------------------------
 # DO NOT MODIFY THE SCRIPT BEYOND THIS POINT
 # ----------------------------------------------------------------------------------------------------------------
 
+
+# Configuration function
+# Read Configuration file
+def read_config():
+
+    # set configuration file settings
+    config = confuse.Configuration(AppName)  #Application Name
+    config.set_file('./config.yaml')         #Configuration File location
+    
+    # Parse configuration file
+    # Set global variables
+    global source_folder, dest_folder, log_location, source_files_ext, \
+        recursive, enable_log, log_level, enable_file_log, enable_console_log, \
+        generate_csv, csv_report_name
+    # parse config file into variables
+    source_folder = config['Folders']['source_folder'].get(confuse.STRING)
+    dest_folder = config['Folders']['destination_folder'].get(confuse.STRING)
+    log_location = config['Folders']['log_location'].get(confuse.STRING)
+    source_files_ext = config['Files']['source_files_ext'].as_str_seq()
+    recursive = config['Other']['recursive'].get()
+    enable_log = config['Logs']['enable_log'].get()
+    log_level = config['Logs']['log_level'].get()
+    enable_file_log = config['Logs']['enable_file_log'].get()
+    enable_console_log = config['Logs']['enable_console_log'].get()
+    generate_csv = config['Logs']['generate_csv'].get()
+    csv_report_name = config['Logs']['csv_report_name'].get(confuse.STRING)
+    
 
 # logger function
 # creates logger handler
@@ -98,7 +87,7 @@ def config_logger():
     ch.setLevel(logging.DEBUG)
 
     # create file handler and set level to debug
-    fh = logging.FileHandler(filename=os.path.join(log_location, 'fileOrganizer.log'), encoding='utf-8')
+    fh = logging.FileHandler(filename=os.path.join(log_location, AppName +'.log'), encoding='utf-8')
     fh.setLevel(logging.DEBUG)
 
     # create formatter
@@ -113,6 +102,20 @@ def config_logger():
         logger.addHandler(ch)
     if enable_file_log:
         logger.addHandler(fh)
+    
+    # sets file logging level, accepts: debug, error, info
+    if log_level.upper() == 'INFO':
+        logger.setLevel(logging.INFO)
+    elif log_level.upper() == 'DEBUG':
+        logger.setLevel(logging.DEBUG)
+    elif log_level.upper() == 'ERROR':
+        logger.setLevel(logging.ERROR) 
+    elif log_level.upper() == 'WARNING':
+        logger.setLevel(logging.WARNING)
+    else:
+        print('log level was not set, please configure log level as one of these options\n'
+        'INFO,WARNING,ERROR,DEBUG')
+        exit(1)
 
 
 # function dir_scanner
@@ -170,14 +173,13 @@ def move_files(dest_folder_name, list_files):
                 except OSError as err:
                     logger.error('[%s]', err)
                     raise
-                    logger.warning('[%s] already exists in folder [%s], and its contents is matching the source file, '
-                                   'file will be replaced', file.name, dest_folder_full)
-
-                    
-                    if generate_csv:
-                        f = open(os.path.join(log_location, csv_report_name), "a")
-                        print(file.path + "," + file.name + "," + dest_folder_full + "," + file.name, file=f)
-                        f.close()
+                logger.warning('[%s] already exists in folder [%s], and its contents is matching the source file, '
+                               'file will be replaced', file.name, dest_folder_full)
+        
+                if generate_csv:
+                    f = open(os.path.join(log_location, csv_report_name), "a")
+                    print(file.path + "," + file.name + "," + dest_folder_full + "," + file.name, file=f)
+                    f.close()
 
             else:
                 file_new_name = os.path.splitext(file.name)[0] + '_copy' + os.path.splitext(file.name)[1]
@@ -186,12 +188,12 @@ def move_files(dest_folder_name, list_files):
                 except OSError as err:
                     logger.error('[%s]', err)
                     raise
-                    logger.warning('[%s] already exists in folder [%s], and its contents does not match the '
-                                   'source file, ''file will be created as a copy', file.name, dest_folder_full)
-                    if generate_csv:
-                        f = open(os.path.join(log_location, csv_report_name), "a")
-                        print(file.path + "," + file.name + "," + dest_folder_full + "," + file_new_name, file=f)
-                        f.close()
+                logger.warning('[%s] already exists in folder [%s], and its contents does not match the '
+                                'source file, ''file will be created as a copy', file.name, dest_folder_full)
+                if generate_csv:
+                    f = open(os.path.join(log_location, csv_report_name), "a")
+                    print(file.path + "," + file.name + "," + dest_folder_full + "," + file_new_name, file=f)
+                    f.close()
 
         else:
             try:
@@ -223,6 +225,11 @@ def compare_file(file, dest_file_full):
 
 
 if __name__ == '__main__':
+
+    read_config()
+    # create logger
+    logger = logging.getLogger(AppName)
+
     if enable_log:
         config_logger()
     logger.info('-------------------------------------------------------------------------------------------------')
@@ -284,12 +291,3 @@ if __name__ == '__main__':
     logger.info('-------------------------------------------------------------------------------------------------')
     logger.info('END OF SCRIPT')
     logger.info('-------------------------------------------------------------------------------------------------\n')
-
-# print('created folder: ', created_folder)
-    # for i in created_folder:
-    #    print("created folder:", os.path.basename(i), 'in full path: ', i)
-    # for file in list_files:
-    #    move_files(dest_folder, file)
-
-    # to get parent folder name from list_files use:  os.path.split(os.path.dirname(i.path))[1]
-    # to get created folder name use: os.path.basename(i)
