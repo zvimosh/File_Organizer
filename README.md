@@ -3,6 +3,8 @@ This script organizes files into separate source folders,
 the folder names are created from the file names.
 The script will search the 'Source Folder' recursively for any files with matching extensions
 to the 'source_files_ext' list.
+
+THIS IS STILL A WORK IN PROGRESS!
 ---------------------------------------------------------------------------------------------------------------
 Author: Zvi Moshkovitz
 Email: z*******@gmail.com
@@ -12,7 +14,7 @@ Date: 14/09/2021 Version: 2.2
 
 This script requires python version 3.9 or above and additional 3rd party python libraries.
 
-To use the script, the user needs to set the following global variables:
+To use the script, the user needs to set the following variables in 'config.yaml' file:
 * 'source_folder' - the folder the script will list the files from.
 * 'source_files_ext' - the list of extensions the script will search for,
 you can add more extensions by adding according to the following example.
@@ -30,3 +32,9 @@ default is 'True'
 * generate_csv -If 'True' the script create a csv report of any file change in the following format:
 'Source Folder', 'Source File', 'Destination Folder', 'Destination File'
 * csv_report_name - sets the csv report name.
+
+
+To Do:
+* Clean up code.
+* Add support to run script with cli parameters
+* Containrize it
