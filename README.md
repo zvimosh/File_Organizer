@@ -7,8 +7,6 @@ to the 'source_files_ext' list.
 THIS IS STILL A WORK IN PROGRESS!
 
 ------------------------------------------------------------------------------------------------
-Author: Zvi Moshkovitz
-Email: z*******@gmail.com
 Published Date: 25/03/2021 Version: 2
 ------------------------------------------------------------------------------------------------
 Date: 14/09/2021 Version: 2.2
