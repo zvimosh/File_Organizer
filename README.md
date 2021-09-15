@@ -3,13 +3,14 @@ This script organizes files into separate source folders,
 the folder names are created from the file names.
 The script will search the 'Source Folder' recursively for any files with matching extensions
 to the 'source_files_ext' list.
+
 THIS IS STILL A WORK IN PROGRESS!
 
----------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 Author: Zvi Moshkovitz
 Email: z*******@gmail.com
 Published Date: 25/03/2021 Version: 2
----------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 Date: 14/09/2021 Version: 2.2
 
 This script requires python version 3.9 or above and additional 3rd party python libraries.
