@@ -14,3 +14,9 @@
 #           1. moved all user confiuration to yaml config file
 #           2. added yaml parser with 'confuse' library
 #           3. reorgnized the code
+# version 2.3:
+# Fixed Bugs:
+#           1. fixed bugs with catching exception in 'delete_empty_folders' function
+#           2. fixed bugs with catching exception in 'move_files' function
+#           3. reorgnized the code
+

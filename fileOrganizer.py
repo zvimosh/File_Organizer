@@ -113,6 +113,7 @@ def config_logger():
     elif log_level.upper() == 'WARNING':
         logger.setLevel(logging.WARNING)
     else:
+        ## Not sure if to keep this, or keep default log level as debug if user did not set it
         print('log level was not set, please configure log level as one of these options\n'
         'INFO,WARNING,ERROR,DEBUG')
         exit(1)
@@ -194,18 +195,17 @@ def move_files(dest_folder_name, list_files):
                     f = open(os.path.join(log_location, csv_report_name), "a")
                     print(file.path + "," + file.name + "," + dest_folder_full + "," + file_new_name, file=f)
                     f.close()
-
         else:
             try:
                 shutil.move(file.path, os.path.join(dest_folder_full, file.name))
-                logger.info('[%s] did not exist in folder [%s], moving file', file.name, dest_folder_full)
-                if generate_csv:
-                    f = open(os.path.join(log_location, csv_report_name), "a")
-                    print(file.path + "," + file.name + "," + dest_folder_full + "," + file.name, file=f)
-                    f.close()
             except OSError as err:
                 logger.error('[%s]', err)
                 raise
+            logger.info('[%s] did not exist in folder [%s], moving file', file.name, dest_folder_full)
+            if generate_csv:
+                f = open(os.path.join(log_location, csv_report_name), "a")
+                print(file.path + "," + file.name + "," + dest_folder_full + "," + file.name, file=f)
+                f.close()
 
 
 def delete_empty_folders(sub_folders_list):
@@ -215,9 +215,10 @@ def delete_empty_folders(sub_folders_list):
             logger.info('[%s] is empty, will delete it', folder.path)
             try:
                 os.rmdir(folder)
-                deleted_folder.append(folder)
             except OSError as err:
                 logger.error('[%s]', err)
+                pass
+            deleted_folder.append(folder)
     return deleted_folder
 
 def compare_file(file, dest_file_full):

@@ -9,7 +9,7 @@ THIS IS STILL A WORK IN PROGRESS!
 ------------------------------------------------------------------------------------------------
 Published Date: 25/03/2021 Version: 2
 ------------------------------------------------------------------------------------------------
-Date: 14/09/2021 Version: 2.2
+Date: 23/09/2021 Version: 2.3
 
 This script requires python version 3.9 or above and additional 3rd party python libraries.
 
