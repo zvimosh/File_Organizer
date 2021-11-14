@@ -22,6 +22,8 @@ VOLUME /script_source
 # create mount for script destination folder
 VOLUME ./script_destination
 
+## test
+
 # copy the content of the local src directory to the working directory
 COPY config/ /config
 
