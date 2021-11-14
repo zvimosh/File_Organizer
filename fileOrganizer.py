@@ -57,7 +57,7 @@ def read_config():
 
     # set configuration file settings
     config = confuse.Configuration(AppName)  #Application Name
-    config.set_file('./config/config.yaml')         #Configuration File location
+    config.set_file('./config.yaml')         #Configuration File location
     
     # Parse configuration file
     # Set global variables
