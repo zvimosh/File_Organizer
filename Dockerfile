@@ -13,20 +13,15 @@ RUN pip install -r requirements.txt
 # copy the content of the local src directory to the working directory
 COPY src/ .
 
-# create mount for configuration folder
-VOLUME /config
-
-# create mount for script source folder
-VOLUME /script_source
-
-# create mount for script destination folder
-VOLUME ./script_destination
-
-## test
-
 # copy the content of the local src directory to the working directory
-COPY config/ /config
+COPY config/config.yaml .
+
+# create mount for configuration folder
+#VOLUME /config
+
+# run entrypoint script
+ENTRYPOINT /app/entrypoint.sh
 
 # command to run on container start
-CMD [ "python", "./fileOrganizer.py" ]
-
+#CMD [ "python", "./fileOrganizer.py" ]
+CMD /bin/sh
